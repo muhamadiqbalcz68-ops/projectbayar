@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bayar Dong — Bayar Tagihan & Isi Pulsa</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Text:wght@600;700;800&family=Work+Sans:wght@400;500;600;700&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ===================== LOGIN OVERLAY ===================== -->
+<div class="login-overlay" id="login-overlay">
+  <div class="login-card">
+    <div class="login-brand">
+      <span class="login-mark">BD</span>
+      <div class="login-brand-text">
+        <strong>Bayar Dong</strong>
+        <small>satu pintu, semua tagihan</small>
+      </div>
+    </div>
+    <h2 class="login-title">Masuk ke Akun Kamu</h2>
+    <p class="login-desc">Simulasi login — nama &amp; kata sandi apa saja bisa dipakai untuk masuk.</p>
+
+    <form id="form-login" novalidate>
+      <div class="field">
+        <label for="input-username">Nama Pengguna</label>
+        <input type="text" id="input-username" placeholder="Contoh: Andi Wijaya" autocomplete="username">
+        <span class="field-error" id="error-username"></span>
+      </div>
+      <div class="field">
+        <label for="input-password">Kata Sandi</label>
+        <input type="password" id="input-password" placeholder="Minimal 4 karakter" autocomplete="current-password">
+        <span class="field-error" id="error-password"></span>
+      </div>
+      <button type="submit" class="btn btn-primary btn-block" id="btn-login">Masuk</button>
+    </form>
+
+    <p class="login-footnote">Versi simulasi — data login tidak dikirim ke server mana pun, hanya disimpan lokal di perangkatmu.</p>
+  </div>
+</div>
+
+<div id="app">
+
+  <!-- ===================== SIDEBAR ===================== -->
+  <aside class="sidebar">
+    <div class="brand">
+      <span class="brand-mark">BD</span>
+      <div class="brand-text">
+        <strong>Bayar Dong</strong>
+        <small>satu pintu, semua tagihan</small>
+      </div>
+    </div>
+
+    <nav class="nav">
+      <p class="nav-label">Menu</p>
+      <button class="nav-item active" data-view="home">
+        <span class="nav-icon" data-icon="home"></span> Beranda
+      </button>
+      <button class="nav-item" data-view="riwayat">
+        <span class="nav-icon" data-icon="history"></span> Riwayat Transaksi
+      </button>
+
+      <p class="nav-label">Bayar Tagihan</p>
+      <button class="nav-item" data-view="tagihan" data-cat="listrik">
+        <span class="nav-icon" data-icon="bolt"></span> Listrik PLN
+      </button>
+      <button class="nav-item" data-view="tagihan" data-cat="pdam">
+        <span class="nav-icon" data-icon="droplet"></span> PDAM / Air
+      </button>
+      <button class="nav-item" data-view="tagihan" data-cat="internet">
+        <span class="nav-icon" data-icon="wifi"></span> Internet & TV Kabel
+      </button>
+      <button class="nav-item" data-view="tagihan" data-cat="bpjs">
+        <span class="nav-icon" data-icon="heart"></span> BPJS Kesehatan
+      </button>
+
+      <p class="nav-label">Isi Ulang</p>
+      <button class="nav-item" data-view="pulsa" data-mode="pulsa">
+        <span class="nav-icon" data-icon="phone"></span> Pulsa
+      </button>
+      <button class="nav-item" data-view="pulsa" data-mode="data">
+        <span class="nav-icon" data-icon="signal"></span> Paket Data
+      </button>
+    </nav>
+
+    <div class="sidebar-footer">
+      <p>Versi simulasi — semua transaksi bersifat demo &amp; disimpan lokal di perangkatmu.</p>
+    </div>
+  </aside>
+
+  <!-- ===================== MAIN ===================== -->
+  <main class="main">
+    <header class="topbar">
+      <div class="topbar-title">
+        <h1 id="page-title">Beranda</h1>
+        <p id="page-subtitle">Selamat datang kembali 👋</p>
+      </div>
+      <div class="topbar-actions">
+        <div class="saldo-chip" id="saldo-chip">
+          <span class="nav-icon" data-icon="wallet"></span>
+          <div>
+            <small>Saldo Bayar Dong</small>
+            <strong id="saldo-topbar">Rp0</strong>
+          </div>
+        </div>
+        <button class="theme-toggle" id="btn-theme-toggle" title="Ganti mode terang/gelap" aria-label="Ganti mode terang/gelap">
+          <span class="nav-icon" data-icon="sun" id="theme-icon"></span>
+        </button>
+        <button class="theme-toggle hidden" id="btn-logout" title="Keluar" aria-label="Keluar">
+          <span class="nav-icon" data-icon="logout"></span>
+        </button>
+        <div class="avatar" title="Akun kamu">AK</div>
+      </div>
+    </header>
+
+    <div class="view-root" id="view-root">
+      <!-- ============ HOME VIEW ============ -->
+      <section class="view" id="view-home">
+
+        <div class="wallet-card">
+          <div class="wallet-pattern" aria-hidden="true"></div>
+          <div class="wallet-top">
+            <span>Saldo Bayar Dong</span>
+            <span class="wallet-badge">Aktif</span>
+          </div>
+          <div class="wallet-amount" id="wallet-amount">Rp0</div>
+          <div class="wallet-bottom">
+            <button class="btn btn-gold" id="btn-topup">
+              <span class="nav-icon" data-icon="plus"></span> Isi Saldo
+            </button>
+            <span class="wallet-hint">Simulasi saldo — bebas diisi ulang kapan saja</span>
+          </div>
+        </div>
+
+        <h2 class="section-title">Mau bayar apa hari ini?</h2>
+        <div class="quick-grid" id="quick-grid">
+          <!-- diisi oleh JS -->
+        </div>
+
+        <div class="recent-block">
+          <div class="recent-head">
+            <h2 class="section-title">Transaksi Terakhir</h2>
+            <button class="link-btn" data-view="riwayat">Lihat semua →</button>
+          </div>
+          <div id="recent-list" class="recent-list"></div>
+        </div>
+      </section>
+
+      <!-- ============ TAGIHAN FORM VIEW ============ -->
+      <section class="view hidden" id="view-tagihan">
+        <div class="checkout-grid">
+          <div class="card form-card">
+            <h2 class="card-title" id="tagihan-title">Bayar Tagihan</h2>
+            <p class="card-desc" id="tagihan-desc">Masukkan nomor pelanggan untuk memeriksa tagihan.</p>
+
+            <form id="form-tagihan" novalidate>
+              <div class="field">
+                <label id="label-idpel" for="input-idpel">Nomor Pelanggan / ID</label>
+                <input type="text" id="input-idpel" inputmode="numeric" placeholder="Contoh: 5321098765" autocomplete="off">
+                <span class="field-error" id="error-idpel"></span>
+              </div>
+
+              <div class="field hidden" id="field-anggota">
+                <label for="input-anggota">Jumlah Anggota Keluarga Terdaftar</label>
+                <input type="number" id="input-anggota" min="1" max="10" value="1">
+                <span class="field-error" id="error-anggota"></span>
+              </div>
+
+              <button type="submit" class="btn btn-primary" id="btn-cek-tagihan">
+                Cek Tagihan
+              </button>
+            </form>
+
+            <div class="hidden" id="tagihan-result">
+              <div class="divider"></div>
+              <div class="bill-info">
+                <div class="bill-row">
+                  <span>Nama Pelanggan</span>
+                  <strong id="bill-nama">-</strong>
+                </div>
+                <div class="bill-row">
+                  <span>Periode</span>
+                  <strong id="bill-periode">-</strong>
+                </div>
+                <div class="bill-row">
+                  <span>Status</span>
+                  <strong class="pill pill-warning" id="bill-status">Belum Dibayar</strong>
+                </div>
+              </div>
+              <button class="btn btn-primary btn-block" id="btn-bayar-tagihan">Bayar Sekarang</button>
+              <button class="btn btn-ghost btn-block" id="btn-cek-ulang">Cek Nomor Lain</button>
+            </div>
+          </div>
+
+          <aside class="card summary-card">
+            <h3>Ringkasan Pembayaran</h3>
+            <div class="summary-row"><span id="sum-label-1">Kategori</span><strong id="sum-kategori">-</strong></div>
+            <div class="summary-row"><span>Tagihan</span><strong id="sum-tagihan">Rp0</strong></div>
+            <div class="summary-row"><span>Biaya Admin</span><strong id="sum-admin">Rp0</strong></div>
+            <div class="divider"></div>
+            <div class="summary-row summary-total"><span>Total Bayar</span><strong id="sum-total">Rp0</strong></div>
+            <p class="summary-note">Cek tagihan dulu untuk melihat rincian biaya lengkap.</p>
+          </aside>
+        </div>
+      </section>
+
+      <!-- ============ PULSA / PAKET DATA VIEW ============ -->
+      <section class="view hidden" id="view-pulsa">
+        <div class="checkout-grid">
+          <div class="card form-card">
+            <h2 class="card-title" id="pulsa-title">Beli Pulsa</h2>
+            <p class="card-desc">Masukkan nomor HP, provider terdeteksi otomatis.</p>
+
+            <div class="field">
+              <label for="input-phone">Nomor HP</label>
+              <input type="text" id="input-phone" inputmode="numeric" placeholder="Contoh: 081234567890" autocomplete="off">
+              <span class="field-error" id="error-phone"></span>
+              <div class="provider-badge hidden" id="provider-badge"></div>
+            </div>
+
+            <h3 class="mini-title" id="pulsa-pick-title">Pilih Nominal</h3>
+            <div class="pulsa-grid" id="pulsa-grid"></div>
+          </div>
+
+          <aside class="card summary-card">
+            <h3>Ringkasan Pembelian</h3>
+            <div class="summary-row"><span>Nomor Tujuan</span><strong id="sum-nomor">-</strong></div>
+            <div class="summary-row"><span>Provider</span><strong id="sum-provider">-</strong></div>
+            <div class="summary-row"><span id="sum-label-item">Item</span><strong id="sum-item">-</strong></div>
+            <div class="summary-row"><span>Harga</span><strong id="sum-harga">Rp0</strong></div>
+            <div class="summary-row"><span>Biaya Admin</span><strong id="sum-admin-pulsa">Rp0</strong></div>
+            <div class="divider"></div>
+            <div class="summary-row summary-total"><span>Total Bayar</span><strong id="sum-total-pulsa">Rp0</strong></div>
+            <button class="btn btn-primary btn-block" id="btn-bayar-pulsa" disabled>Bayar Sekarang</button>
+          </aside>
+        </div>
+      </section>
+
+      <!-- ============ RIWAYAT VIEW ============ -->
+      <section class="view hidden" id="view-riwayat">
+        <div class="riwayat-toolbar">
+          <div class="tabs" id="riwayat-tabs">
+            <button class="tab active" data-filter="semua">Semua</button>
+            <button class="tab" data-filter="berhasil">Berhasil</button>
+            <button class="tab" data-filter="gagal">Gagal</button>
+          </div>
+          <input type="text" id="riwayat-search" placeholder="Cari nomor, ID, atau kategori…">
+        </div>
+        <div id="riwayat-list" class="riwayat-list"></div>
+        <div class="empty-state hidden" id="riwayat-empty">
+          <div class="empty-icon" data-icon="history"></div>
+          <h3>Belum ada transaksi</h3>
+          <p>Yuk bayar tagihan atau isi pulsa pertama kamu.</p>
+          <button class="btn btn-primary" data-view="home">Ke Beranda</button>
+        </div>
+      </section>
+    </div>
+  </main>
+</div>
+
+<!-- ===================== MODAL: KONFIRMASI ===================== -->
+<div class="modal-overlay hidden" id="modal-confirm">
+  <div class="modal">
+    <h3>Konfirmasi Pembayaran</h3>
+    <p class="modal-desc">Periksa kembali detail transaksi sebelum melanjutkan.</p>
+    <div class="modal-detail" id="confirm-detail"></div>
+    <div class="modal-total-row">
+      <span>Total Bayar</span>
+      <strong id="confirm-total">Rp0</strong>
+    </div>
+    <div class="payment-methods">
+      <p class="payment-methods-label">Pilih Metode Pembayaran</p>
+      <div class="method-list" id="method-list"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" id="btn-cancel-confirm">Batal</button>
+      <button class="btn btn-primary" id="btn-confirm-pay">Konfirmasi & Bayar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== MODAL: PROSES ===================== -->
+<div class="modal-overlay hidden" id="modal-processing">
+  <div class="modal modal-processing">
+    <div class="spinner"></div>
+    <h3>Memproses pembayaran…</h3>
+    <ul class="stepper" id="stepper-list">
+      <li data-step="1"><span class="step-dot"></span> Memvalidasi data</li>
+      <li data-step="2"><span class="step-dot"></span> Menghubungi biller</li>
+      <li data-step="3"><span class="step-dot"></span> Menyelesaikan pembayaran</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ===================== MODAL: STRUK / BUKTI ===================== -->
+<div class="modal-overlay hidden" id="modal-receipt">
+  <div class="receipt-wrap">
+    <div class="receipt" id="receipt-content">
+      <div class="receipt-status" id="receipt-status-icon"></div>
+      <h3 id="receipt-status-text">Pembayaran Berhasil</h3>
+      <p class="receipt-sub" id="receipt-status-sub">Struk ini adalah bukti transaksi kamu.</p>
+
+      <div class="receipt-divider"></div>
+
+      <div class="receipt-row"><span>ID Transaksi</span><strong id="rc-id">-</strong></div>
+      <div class="receipt-row"><span>Tanggal</span><strong id="rc-date">-</strong></div>
+      <div class="receipt-row"><span>Kategori</span><strong id="rc-kategori">-</strong></div>
+      <div class="receipt-row" id="rc-row-tujuan"><span>Tujuan</span><strong id="rc-tujuan">-</strong></div>
+      <div class="receipt-row" id="rc-row-nama"><span>Atas Nama</span><strong id="rc-nama">-</strong></div>
+      <div class="receipt-row"><span>Item</span><strong id="rc-item">-</strong></div>
+      <div class="receipt-row"><span>Metode Bayar</span><strong id="rc-metode">-</strong></div>
+
+      <div class="receipt-divider dashed"></div>
+
+      <div class="receipt-row"><span>Tagihan</span><strong id="rc-tagihan">Rp0</strong></div>
+      <div class="receipt-row"><span>Biaya Admin</span><strong id="rc-admin">Rp0</strong></div>
+      <div class="receipt-row receipt-total"><span>Total</span><strong id="rc-total">Rp0</strong></div>
+
+      <div class="receipt-divider dashed"></div>
+      <div class="receipt-barcode" aria-hidden="true"></div>
+      <p class="receipt-footnote">Terima kasih sudah bayar tepat waktu. — Bayar Dong</p>
+    </div>
+    <div class="receipt-actions">
+      <button class="btn btn-ghost" id="btn-retry-receipt">Coba Lagi</button>
+      <button class="btn btn-secondary" id="btn-print-receipt">Cetak / Unduh</button>
+      <button class="btn btn-primary" id="btn-done-receipt">Selesai</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== MODAL: ISI SALDO ===================== -->
+<div class="modal-overlay hidden" id="modal-topup">
+  <div class="modal">
+    <h3>Isi Saldo Bayar Dong</h3>
+    <p class="modal-desc">Pilih nominal top up (simulasi, langsung masuk saldo).</p>
+    <div class="topup-grid" id="topup-grid"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" id="btn-cancel-topup">Tutup</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== TOAST ===================== -->
+<div class="toast-container" id="toast-container"></div>
+
+<script src="script.js"></script>
+</body>
+</html>
